@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+{% set fmtstr='%-55s %-30s %-10s %-55s %s' -%}
+{{ fmtstr | format('# <filesystem>', '<mountpoint>', '<type>', '<options>', '<dump/pass>') }}
+{% set fmtstr='%-55s %-30s %-10s %-55s %s %s' -%}
+
+{% if fstab_tmpfs %}
+# special tmpsfs mount
+{% if fstab_tmpfs_max_size is defined %}
+{{ fmtstr | format('tmpfs', '/tmp', 'tmpfs', fstab_tmpfs_options | union(['size='+fstab_tmpfs_max_size]) | join(','), 0, 0) }}
+{% else %}
+{{ fmtstr | format('tmpfs', '/tmp', 'tmpfs', fstab_tmpfs_options | join(','), 0, 0) }}
+{% endif %}
+{% endif %}
+
+{% if fstab_sysfs %}
+# special sysfs mount
+{{ fmtstr | format('sysfs', '/sys', 'sysfs', fstab_sysfs_options | join(','), 0, 0) }}
+{% endif %}
+
+{% if fstab_proc %}
+# special procfs mount
+{{ fmtstr | format('proc', '/proc', 'proc', fstab_proc_options | join(','), 0, 0) }}
+{% endif %}
+
+{% if fstab_mounts is defined and fstab_mounts | length > 0 %}
+# system mounts
+{% for m in fstab_mounts %}
+{{ fmtstr | format(m.source, m.target, m.type, m.options | default(['defaults']) | join(','), m.dump | default(false) | int, m.fsck | default(2)) }}
+{% endfor %}
+{% endif %}

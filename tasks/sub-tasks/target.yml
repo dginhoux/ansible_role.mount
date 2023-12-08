@@ -1,0 +1,16 @@
+---
+- name: "Check mount target {{ mount.target }}"
+  ansible.builtin.stat:
+    path: "{{ mount.target }}"
+  register: target_state
+
+- name: "Create mount target {{ mount.target }}"
+  when:
+    - not target_state.stat.exists
+    # - not target_state.stat.isdir
+  ansible.builtin.file:
+    path: "{{ mount.target }}"
+    state: directory
+    mode: "{{ mount.mode | default('0750') }}"
+    owner: "{{ mount.owner | default('root') }}"
+    group: "{{ mount.group | default('root') }}"

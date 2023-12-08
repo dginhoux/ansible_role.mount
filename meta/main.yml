@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  role_name: mount
+  description: |
+    This role configure linux mounts and generate `/etc/mount`.
+  author: Dany GINHOUX
+  company: dginhoux
+  license: MIT
+  min_ansible_version: "2.13"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - fstab
+    - mount²
+
+dependencies: []

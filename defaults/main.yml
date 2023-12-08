@@ -1,0 +1,63 @@
+---
+
+mount_purge_fstab: true
+
+mount_list: []
+mount_list_host: []
+mount_list_group: []
+
+# mount_list:
+#   - target: /boot
+#     owner: root
+#     group: root
+#     mode: "0750"
+#     source: /dev/sda1
+#     boot: true
+#     fstype: ext2
+#     options:
+#       - defaults
+#       - noatime
+#     dump: 0
+#     pass: 0
+#     state: mounted
+
+#   - target: /
+#     owner: root
+#     group: root
+#     mode: "0750"
+#     source: /dev/mapper/vg0-lv--root
+#     boot: true
+#     fstype: xfs
+#     options:
+#       - defaults
+#       - noatime
+#     dump: 0
+#     pass: 0
+#     state: mounted
+
+#   - target: /home
+#     owner: root
+#     group: root
+#     mode: "0750"
+#     source: /dev/mapper/vg0-lv--home
+#     boot: true
+#     fstype: xfs
+#     options:
+#       - defaults
+#       - noatime
+#     dump: 0
+#     pass: 0
+#     state: mounted
+
+#   - target: none
+#     owner: root
+#     group: root
+#     mode: "0750"
+#     source: /dev/mapper/vg0-lv--swap
+#     boot: true
+#     fstype: swap
+#     options:
+#       - sw
+#     dump: 0
+#     pass: 0
+#     state: mounted
