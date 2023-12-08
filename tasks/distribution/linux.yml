@@ -1,16 +1,5 @@
 ---
 
-- name: Purge fstab content
-  when:
-    - mount_purge_fstab | bool
-  ansible.builtin.copy:
-    dest: "/etc/fstab"
-    content: |
-      # Ansible managed
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Create mount target
   when:
     - not mount.target in "none,/"
@@ -23,23 +12,58 @@
   ansible.builtin.include_tasks:
     file: "sub-tasks/target.yml"
 
-- name: Configure mount
-  loop: "{{ mount_list + mount_list_host + mount_list_group | flatten(levels=1) }}"
-  loop_control:
-    loop_var: mount
-    label: "source:{{ mount.source }}, target:{{ mount.target }}"
-  ansible.posix.mount:
-    boot: "{{ mount.boot | default(omit) }}"
-    dump: "{{ mount.dump | default(omit) }}"
-    fstype: "{{ mount.fstype | default(omit) }}"
-    opts: "{{ mount.options | join(',') | default(omit) }}"
-    passno: "{{ mount.pass | default(omit) }}"
-    path: "{{ mount.target }}"
-    src: "{{ mount.source | default(omit) }}"
-    state: "{{ mount.state | default('mounted') }}"
 
-- name: Systemd reload-daemon
+- name: Operate in mount mode
   when:
-    - ansible_service_mgr == "systemd"
-  ansible.builtin.systemd:
-    daemon_reload: true
+    - mount_operate_mode == "ansible.posix.mount"
+  block:
+    - name: Purge fstab content
+      when:
+        - mount_purge_fstab | bool
+      ansible.builtin.copy:
+        dest: "/etc/fstab"
+        content: |
+          # Ansible managed
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Configure mount
+      loop: "{{ mount_list + mount_list_host + mount_list_group | flatten(levels=1) }}"
+      loop_control:
+        loop_var: mount
+        label: "source:{{ mount.source }}, target:{{ mount.target }}"
+      ansible.posix.mount:
+        boot: "{{ mount.boot | default(omit) }}"
+        dump: "{{ mount.dump | default(omit) }}"
+        fstype: "{{ mount.fstype | default(omit) }}"
+        opts: "{{ mount.options | default(['defaults']) | join(',') }}"
+        passno: "{{ mount.pass | default(omit) }}"
+        path: "{{ mount.target }}"
+        src: "{{ mount.source | default(omit) }}"
+        state: "{{ mount.state | default('mounted') }}"
+
+
+- name: Operate in template mode
+  when:
+    - mount_operate_mode == "template"
+  block:
+    - name: Generate fstab file
+      ansible.builtin.template:
+        dest: /etc/fstab
+        owner: root
+        group: root
+        mode: "0644"
+        src: fstab.j2
+
+    - name: Systemd reload-daemon
+      when:
+        - ansible_service_mgr == "systemd"
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Try shell mount -a
+      when:
+        - mount_operate_mode_template_mount_a | bool
+      ansible.builtin.shell:
+        cmd: "mount -a"

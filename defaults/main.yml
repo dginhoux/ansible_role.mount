@@ -1,6 +1,22 @@
 ---
+###### NOTES FOR OPERATE MODE 
+#### toggle between ansible module "ansible.posix.mount" and "ansible.builtin.template"
+#### mount    : can return error and not populate fstab file for some reasons (busy dev...)
+####            an option is added to purge fstab content if necessary
+#### template : generate file and try a shell "mount -a"
 
-mount_purge_fstab: true
+# mount_operate_mode: template
+mount_operate_mode: mount
+mount_operate_mode_mount_purge: true
+mount_operate_mode_template_mount_a: true
+
+
+####### NOTES FOR SWAP
+##### state    : must be "present" if operate in "mount" mode
+##### target   : must be "none"
+##### fstype   : must be "swap"
+##### options  : must be ['sw']
+
 
 mount_list: []
 mount_list_host: []
@@ -59,5 +75,5 @@ mount_list_group: []
 #     options:
 #       - sw
 #     dump: 0
-#     pass: 0
-#     state: mounted
+#     pass: 1
+#     state: present

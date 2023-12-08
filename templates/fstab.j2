@@ -1,30 +1,23 @@
 # {{ ansible_managed }}
-{% set fmtstr='%-55s %-30s %-10s %-55s %s' -%}
-{{ fmtstr | format('# <filesystem>', '<mountpoint>', '<type>', '<options>', '<dump/pass>') }}
-{% set fmtstr='%-55s %-30s %-10s %-55s %s %s' -%}
 
-{% if fstab_tmpfs %}
-# special tmpsfs mount
-{% if fstab_tmpfs_max_size is defined %}
-{{ fmtstr | format('tmpfs', '/tmp', 'tmpfs', fstab_tmpfs_options | union(['size='+fstab_tmpfs_max_size]) | join(','), 0, 0) }}
-{% else %}
-{{ fmtstr | format('tmpfs', '/tmp', 'tmpfs', fstab_tmpfs_options | join(','), 0, 0) }}
+{% if mount_list is defined and mount_list is iterable %}
+{% for m in mount_list %}
+{% if m.state in "present,mounted,remounted" %}
+{{ m.source }} {{ m.target }} {{ m.fstype }} {{ m.options | default(['defaults']) | join(',') }} {{ m.dump | default('0') }} {{ m.pass | default('0') }}
 {% endif %}
+{% endfor %}
 {% endif %}
-
-{% if fstab_sysfs %}
-# special sysfs mount
-{{ fmtstr | format('sysfs', '/sys', 'sysfs', fstab_sysfs_options | join(','), 0, 0) }}
+{% if mount_list_host is defined and mount_list_host is iterable %}
+{% for m in mount_list_host %}
+{% if m.state in "present,mounted,remounted" %}
+{{ m.source }} {{ m.target }} {{ m.fstype }} {{ m.options | default(['defaults']) | join(',') }} {{ m.dump | default('0') }} {{ m.pass | default('0') }}
 {% endif %}
-
-{% if fstab_proc %}
-# special procfs mount
-{{ fmtstr | format('proc', '/proc', 'proc', fstab_proc_options | join(','), 0, 0) }}
+{% endfor %}
 {% endif %}
-
-{% if fstab_mounts is defined and fstab_mounts | length > 0 %}
-# system mounts
-{% for m in fstab_mounts %}
-{{ fmtstr | format(m.source, m.target, m.type, m.options | default(['defaults']) | join(','), m.dump | default(false) | int, m.fsck | default(2)) }}
+{% if mount_list_group is defined and mount_list_group is iterable %}
+{% for m in mount_list_group %}
+{% if m.state in "present,mounted,remounted" %}
+{{ m.source }} {{ m.target }} {{ m.fstype }} {{ m.options | default(['defaults']) | join(',') }} {{ m.dump | default('0') }} {{ m.pass | default('0') }}
+{% endif %}
 {% endfor %}
 {% endif %}
