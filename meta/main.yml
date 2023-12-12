@@ -22,6 +22,6 @@ galaxy_info:
         - all
   galaxy_tags:
     - fstab
-    - mount²
+    - mount
 
 dependencies: []

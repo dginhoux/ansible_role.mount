@@ -1,5 +1,5 @@
 ---
-###### NOTES FOR OPERATE MODE 
+###### NOTES FOR OPERATE MODE
 #### toggle between ansible module "ansible.posix.mount" and "ansible.builtin.template"
 #### mount    : can return error and not populate fstab file for some reasons (busy dev...)
 ####            an option is added to purge fstab content if necessary
