@@ -18,6 +18,7 @@
     - mount_operate_mode == "ansible.posix.mount"
   block:
     - name: Purge fstab content
+      become: true
       when:
         - mount_purge_fstab | bool
       ansible.builtin.copy:
@@ -29,6 +30,7 @@
         mode: "0644"
 
     - name: Configure mount
+      become: true
       loop: "{{ mount_list + mount_list_host + mount_list_group | flatten(levels=1) }}"
       loop_control:
         loop_var: mount
@@ -49,6 +51,7 @@
     - mount_operate_mode == "template"
   block:
     - name: Generate fstab file
+      become: true
       ansible.builtin.template:
         dest: /etc/fstab
         owner: root
@@ -57,12 +60,14 @@
         src: fstab.j2
 
     - name: Systemd reload-daemon
+      become: true
       when:
         - ansible_service_mgr == "systemd"
       ansible.builtin.systemd:
         daemon_reload: true
 
     - name: Try shell mount -a
+      become: true
       when:
         - mount_operate_mode_template_mount_a | bool
       ansible.builtin.shell:

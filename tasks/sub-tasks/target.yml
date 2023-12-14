@@ -1,10 +1,12 @@
 ---
 - name: "Check mount target {{ mount.target }}"
+  become: true
+  register: target_state
   ansible.builtin.stat:
     path: "{{ mount.target }}"
-  register: target_state
 
 - name: "Create mount target {{ mount.target }}"
+  become: true
   when:
     - not target_state.stat.exists
     # - not target_state.stat.isdir
