@@ -4,9 +4,12 @@
 
 ## DESCRIPTION
 
-This role configure linux mounts and generate `/etc/fstab`.
-Mountpoints are created if necessary.
+This role configure linux mounts and generate `/etc/fstab`. <br />
+Mountpoints are created if necessary. <br /><br />
 
+Two mode are possibles by toggle between ansible module "ansible.posix.mount" and "ansible.builtin.template"<br />
+* mount : can return error and not populate fstab file for some reasons (busy dev...)
+* template : generate file and try a shell "mount -a"
 
 
 ## REQUIREMENTS
@@ -49,9 +52,10 @@ git clone https://github.com/dginhoux/ansible_role.mount dginhoux.mount
 #### EXAMPLE PLAYBOOK
 
 ```yaml
-- hosts: all
+- name: Playbook
+  hosts: all
   roles:
-    - name: start role dginhoux.mount
+    - name: Start role dginhoux.mount
       ansible.builtin.include_role:
         name: dginhoux.mount
 ```
@@ -64,7 +68,17 @@ git clone https://github.com/dginhoux/ansible_role.mount dginhoux.mount
 Defaults variables defined in `defaults/main.yml` : 
 
 ```yaml
-mount_purge_fstab: true
+###### NOTES FOR OPERATE MODE
+#### toggle between ansible module "ansible.posix.mount" and "ansible.builtin.template"
+#### mount    : can return error and not populate fstab file for some reasons (busy dev...)
+####            an option is added to purge fstab content if necessary
+#### template : generate file and try a shell "mount -a"
+
+# mount_operate_mode: template
+mount_operate_mode: mount
+mount_operate_mode_mount_purge: true
+mount_operate_mode_template_mount_a: true
+
 
 mount_list:
   - target: /boot
@@ -121,7 +135,14 @@ mount_list:
     dump: 0
     pass: 0
     state: mounted
+
+mount_list_host: []
+mount_list_group: []
 ```
+
+NOTE : Theses 3 lists `mount_list`, `mount_list_group` and `mount_list_host` are merged. <br />
+You can use the host and group lists to specify users per host or group off hosts.
+
 
 #### DEFAULT OS SPECIFIC VARIABLES
 
