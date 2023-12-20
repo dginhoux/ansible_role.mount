@@ -65,7 +65,11 @@ git clone https://github.com/dginhoux/ansible_role.mount dginhoux.mount
 
 #### DEFAULT VARIABLES
 
-Defaults variables defined in `defaults/main.yml` : 
+Defaults variables defined in `defaults/main.yml`
+
+
+#### EXAMPLES VARIABLES
+
 
 ```yaml
 ###### NOTES FOR OPERATE MODE
