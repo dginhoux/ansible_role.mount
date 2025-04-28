@@ -15,7 +15,7 @@
 
 - name: Operate in mount mode
   when:
-    - mount_operate_mode == "ansible.posix.mount"
+    - mount_operate_mode == "mount"
   block:
     - name: Purge fstab content
       become: true
