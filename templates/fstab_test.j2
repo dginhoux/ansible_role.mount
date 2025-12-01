@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+# <file system> <mount point> <type> <options> <dump> <pass>
+
+{% for m in (mount_list | default([])) 
+            + (mount_list_host | default([])) 
+            + (mount_list_group | default([])) %}
+{% if m.state in "present,mounted,remounted" %}
+{{ m.source }}	{{ m.target }}	{{ m.fstype }}	{{ m.options | default(['defaults']) | join(',') }}	{{ m.dump | default('0') }}	{{ m.pass | default('0') }}
+{% endif %}
+{% endfor %}

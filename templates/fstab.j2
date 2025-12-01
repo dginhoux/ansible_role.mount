@@ -1,4 +1,5 @@
 # {{ ansible_managed }}
+# <file system> <mount point> <type> <options> <dump> <pass>
 
 {% if mount_list is defined and mount_list is iterable %}
 {% for m in mount_list %}
